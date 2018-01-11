@@ -1,5 +1,6 @@
 package nyc.c4q.androidtest_unit4final;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +22,13 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorViewHol
     private static String TAG = "ColorAdapter";
     private List<String> colorNames;
     private HashMap<String, String> colorDict;
+    Context context;
 
     public ColorAdapter(List<String> colors, HashMap<String, String> colorMap) {
         Sort.selectionSort(colors, true);
         colorNames = colors;
         colorDict = colorMap;
+        this.context = context;
     }
 
     @Override
@@ -35,13 +39,26 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorViewHol
 
     @Override
     public void onBindViewHolder(ColorViewHolder holder, int position) {
-        String color = colorNames.get(position);
+        final String color = colorNames.get(position);
         holder.name.setText(color);
         try {
             holder.name.setTextColor(Color.parseColor(getColor(color)));
         } catch (Exception e) { // default to black if color is not available or invalid hex.
+
+            if (colorDict.get(color)== null){
+                holder.name.setTextColor(Color.parseColor("0000ff"));
+            }
+
             Log.d(TAG, "Unable to parse color: " + color);
-            holder.name.setTextColor(Color.parseColor("#00ff00"));
+            holder.name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context, color + "has a HEX value of"+ colorDict.get(color), Toast.LENGTH_SHORT).show();
+                }
+            });
+            holder.name.setTextColor(Color.parseColor("#00ff00")); {
+            }
+
             // TODO: When the name in a viewHolder is clicked,
             // display a long toast with the text "{color_name} has a HEX value of {color_hex}
             // for example: "blue has a HEX value of #0000ff"
